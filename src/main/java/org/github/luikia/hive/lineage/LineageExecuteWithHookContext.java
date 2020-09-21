@@ -78,7 +78,7 @@ public class LineageExecuteWithHookContext implements ExecuteWithHookContext {
         LinkedHashMap<String, ObjectPair<SelectOperator,
                 Table>> finalSelOps = index.getFinalSelectOps();
         Map<String, Vertex> vertexCache = Maps.newLinkedHashMap();
-        String hql = conf.get("hive.sql.file.name");
+        String hqlId = conf.getTrimmed("hive.sql.id");
         List<Edge> edges = Lists.newArrayList();
         for (ObjectPair<SelectOperator,
                 org.apache.hadoop.hive.ql.metadata.Table> pair : finalSelOps.values()) {
@@ -141,12 +141,12 @@ public class LineageExecuteWithHookContext implements ExecuteWithHookContext {
                     targets.add(target);
                     LineageInfo.Dependency dep = dependencies.get(i);
                     addEdge(vertexCache, edges, dep.getBaseCols(), target,
-                            dep.getExpr(), hql, Edge.Type.PROJECTION);
+                            dep.getExpr(), hqlId, Edge.Type.PROJECTION);
                 }
                 Set<LineageInfo.Predicate> conds = index.getPredicates(finalSelOp);
                 if (CollectionUtils.isNotEmpty(conds)) {
                     conds.forEach(cond -> addEdge(vertexCache, edges, cond.getBaseCols(),
-                            Sets.newLinkedHashSet(targets), cond.getExpr(), hql,
+                            Sets.newLinkedHashSet(targets), cond.getExpr(), hqlId,
                             Edge.Type.PREDICATE));
                 }
             }
